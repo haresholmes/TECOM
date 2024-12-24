@@ -242,5 +242,62 @@
             }
         }
     </script>
+    <script type="module">
+        // Firebase Configuration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
+      
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWYoxoPECCBK5n-IPYLgtDRSwnGpWbEHs",
+            authDomain: "tecom-payments.firebaseapp.com",
+            databaseURL: "https://tecom-payments-default-rtdb.firebaseio.com",
+            projectId: "tecom-payments",
+            storageBucket: "tecom-payments.appspot.com",
+            messagingSenderId: "1068526664654",
+            appId: "1:1068526664654:web:2a4e53dd5160fa950b499f",
+            measurementId: "G-585VG853EQ"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+      
+        // Function to log bank transfer payments
+        async function submitBankTransfer(event) {
+            event.preventDefault();
+            const name = document.getElementById('bankName').value;
+            const apartment = document.getElementById('bankApartment').value;
+            const amount = document.getElementById('bankAmount').value;
+            const receipt = document.getElementById('bankReceipt').files[0];
+      
+            if (name && apartment && amount && receipt) {
+                try {
+                    // Upload receipt to Firebase Storage
+                    const receiptRef = ref(storage, `receipts/${Date.now()}_${receipt.name}`);
+                    const uploadSnapshot = await uploadBytes(receiptRef, receipt);
+                    const receiptURL = await getDownloadURL(uploadSnapshot.ref);
+      
+                    // Save payment data to Firestore
+                    await addDoc(collection(db, 'payments'), {
+                        name: name,
+                        apartment: apartment,
+                        amount: amount,
+                        method: 'Bank Transfer',
+                        receiptURL: receiptURL,
+                        timestamp: serverTimestamp(),
+                    });
+      
+                    showNotification('Payment logged successfully!', 'success');
+                } catch (error) {
+                    showNotification('Error logging payment: ' + error.message, 'danger');
+                }
+            } else {
+                showNotification('Please fill all fields and upload the receipt.', 'danger');
+            }
+        }
+      </script>
+      
 </body>
 </html>
