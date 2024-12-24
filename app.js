@@ -7,6 +7,9 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 const cors = require('cors');
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? 'https://haresholmes.github.io'  // Production frontend URL
+  : 'http://localhost:3000';  // Local development URL
 
 app.use(cors({
     origin: 'https://haresholmes.github.io',
