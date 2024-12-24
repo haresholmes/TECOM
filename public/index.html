@@ -98,24 +98,55 @@
     <!-- Pay Rent Section -->
     <div id="rent" class="section container">
         <h2>Pay Rent Online</h2>
-        <form id="ziinaPaymentForm">
-            <!-- User's name input -->
+        <form id="ziinaPaymentForm" onsubmit="handleZiinaPayment(event)">
             <div class="mb-3">
                 <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name" required>
             </div>
-            <!-- Apartment number input -->
             <div class="mb-3">
                 <label for="apartment">Apartment/Partition Number</label>
-                <input type="text" class="form-control" id="apartment" placeholder="e.g., A-101" required>
+                <input type="text" class="form-control" name="apartment" id="apartment" placeholder="e.g., A-101" required>
             </div>
-            <!-- Rent amount input -->
             <div class="mb-3">
                 <label for="amount">Amount (AED)</label>
-                <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
+                <input type="number" class="form-control" name="amount" id="amount" placeholder="Enter amount" required>
             </div>
             <button type="submit">Pay with Ziina</button>
         </form>
+        
+        <script>
+    document.getElementById('ziinaPaymentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const apartment = document.getElementById('apartment').value;
+    const amount = document.getElementById('amount').value;
+
+    if (!name || !apartment || !amount) {
+        alert('All fields are required!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/submit-ziina', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, apartment, amount }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            window.open(result.ziinaUrl, '_blank');
+        } else {
+            console.error('Backend error:', result.message);
+            alert(result.message || 'Failed to process payment.');
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+        alert('An error occurred while processing the payment.');
+    }
+});
+        </script>        
         <div id="ziina-alert" class="alert bg-success text-white">Ziina payment logged successfully!</div>
     </div>
 
@@ -133,112 +164,33 @@
             <li>Branch: IBD - BUSINESS BAY BRANCH</li>
             <li>Swift Code: ADCBAEAA</li>
         </ul>
-        <form id="bankTransferForm">
-            <!-- User's name input -->
-            <div class="mb-3">
-                <label for="bankName">Name</label>
-                <input type="text" class="form-control" id="bankName" placeholder="Enter your name" required>
-            </div>
-            <!-- Apartment number input -->
-            <div class="mb-3">
-                <label for="bankApartment">Apartment/Partition Number</label>
-                <input type="text" class="form-control" id="bankApartment" placeholder="e.g., A-101" required>
-            </div>
-            <!-- Transfer amount input -->
-            <div class="mb-3">
-                <label for="bankAmount">Amount (AED)</label>
-                <input type="number" class="form-control" id="bankAmount" placeholder="Enter amount" required>
-            </div>
-            <!-- Receipt upload input -->
-            <div class="mb-3">
-                <label for="bankReceipt">Upload Receipt</label>
-                <input type="file" class="form-control" id="bankReceipt" required>
-            </div>
-            <button type="submit">Submit Bank Transfer</button>
-        </form>
-        <div id="transfer-alert" class="alert bg-success text-white">Bank transfer logged successfully!</div>
-    </div>
+        <div id="transfer" class="section container">
+            <h2>Bank Transfer</h2>
+            <form id="bankTransferForm" enctype="multipart/form-data" method="POST" action="/submit-bank-transfer">
+                <div class="mb-3">
+                    <label for="bankName">Name</label>
+                    <input type="text" class="form-control" name="name" id="bankName" placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="bankApartment">Apartment/Partition Number</label>
+                    <input type="text" class="form-control" name="apartment" id="bankApartment" placeholder="e.g., A-101" required>
+                </div>
+                <div class="mb-3">
+                    <label for="bankAmount">Amount (AED)</label>
+                    <input type="number" class="form-control" name="amount" id="bankAmount" placeholder="Enter amount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="bankReceipt">Upload Receipt</label>
+                    <input type="file" class="form-control" name="receipt" id="bankReceipt" required>
+                </div>
+                <button type="submit">Submit Bank Transfer</button>
+            </form>
+        </div>
+        
 
     <footer class="text-center py-3">&copy; 2024 Tecom Residence</footer>
-    <!-- Ensure Bootstrap JavaScript is properly loaded; this is necessary for the navbar functionality to work correctly -->
+
+    <!-- Ensure Bootstrap JavaScript is properly loaded -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script type="module">
-        // Load Firebase dependencies
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
-
-        // Firebase configuration for your project
-        const firebaseConfig = {
-            apiKey: "AIzaSyAWYoxoPECCBK5n-IPYLgtDRSwnGpWbEHs",
-            authDomain: "tecom-payments.firebaseapp.com",
-            databaseURL: "https://tecom-payments-default-rtdb.firebaseio.com",
-            projectId: "tecom-payments",
-            storageBucket: "tecom-payments.appspot.com",
-            messagingSenderId: "1068526664654",
-            appId: "1:1068526664654:web:2a4e53dd5160fa950b499f",
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        // Handle Ziina payment form submission
-        document.getElementById('ziinaPaymentForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent page reload on form submission
-            const name = document.getElementById('name').value;
-            const apartment = document.getElementById('apartment').value;
-            const amount = document.getElementById('amount').value;
-
-            if (name && apartment && amount) {
-                const ziinaLink = `https://pay.ziina.com/haresholmes?amount=${amount}`;
-                window.open(ziinaLink, '_blank'); // Redirect user to Ziina payment link
-
-                // Add payment details to Firestore
-                await addDoc(collection(db, 'payments'), {
-                    name,
-                    apartment,
-                    amount,
-                    method: 'Ziina',
-                    timestamp: serverTimestamp(),
-                });
-
-                // Show success alert
-                document.getElementById('ziina-alert').classList.add('show');
-                setTimeout(() => document.getElementById('ziina-alert').classList.remove('show'), 3000);
-            }
-        });
-
-        // Handle bank transfer form submission
-        document.getElementById('bankTransferForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent page reload on form submission
-            const name = document.getElementById('bankName').value;
-            const apartment = document.getElementById('bankApartment').value;
-            const amount = document.getElementById('bankAmount').value;
-            const receipt = document.getElementById('bankReceipt').files[0]; // Get uploaded receipt file
-
-            if (name && apartment && amount && receipt) {
-                const receiptRef = ref(storage, `receipts/${Date.now()}_${receipt.name}`);
-                const uploadSnapshot = await uploadBytes(receiptRef, receipt); // Upload receipt to Firebase Storage
-                const receiptURL = await getDownloadURL(uploadSnapshot.ref); // Get download URL for the uploaded receipt
-
-                // Add bank transfer details to Firestore
-                await addDoc(collection(db, 'payments'), {
-                    name,
-                    apartment,
-                    amount,
-                    method: 'Bank Transfer',
-                    receiptURL,
-                    timestamp: serverTimestamp(),
-                });
-
-                // Show success alert
-                document.getElementById('transfer-alert').classList.add('show');
-                setTimeout(() => document.getElementById('transfer-alert').classList.remove('show'), 3000);
-            }
-        });
-    </script>
 </body>
 </html>

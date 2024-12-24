@@ -1,0 +1,17 @@
+[
+  {
+    "name": "dasdas",
+    "apartment": "1221",
+    "amount": "12",
+    "method": "Ziina",
+    "timestamp": "2024-12-24T16:36:58.486Z"
+  },
+  {
+    "name": "dsad",
+    "apartment": "31",
+    "amount": "1221",
+    "method": "Bank Transfer",
+    "receiptPath": "/uploads/1735058452733_services.jpg",
+    "timestamp": "2024-12-24T16:40:52.740Z"
+  }
+]
