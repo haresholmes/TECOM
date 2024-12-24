@@ -7,11 +7,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        /* General body styling */
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #121212; /* Dark background */
+            color: #ffffff; /* Light text */
         }
+        
+        /* Navbar styling */
         .navbar {
             background: #1f1f1f;
         }
@@ -19,6 +22,8 @@
             color: #ffffff !important;
             font-weight: 500;
         }
+        
+        /* Hero section styling */
         .hero {
             background: url('https://source.unsplash.com/1600x900/?luxury,apartment') no-repeat center center/cover;
             height: 400px;
@@ -28,16 +33,20 @@
             color: #ffffff;
             font-size: 36px;
         }
+        
+        /* Section styling for forms */
         .section {
             padding: 40px 20px;
-            background: #1f1f1f;
+            background: #1f1f1f; /* Dark section background */
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             margin-bottom: 30px;
         }
+        
+        /* Button styling */
         button {
-            background-color: #ffcc00;
-            color: #121212;
+            background-color: #ffcc00; /* Bright yellow button */
+            color: #121212; /* Dark button text */
             border: none;
             padding: 12px 20px;
             font-weight: bold;
@@ -47,11 +56,13 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #ffaa00;
+            background-color: #ffaa00; /* Slightly darker yellow on hover */
             color: #121212;
         }
+        
+        /* Alert styling */
         .alert {
-            display: none;
+            display: none; /* Initially hidden */
             position: fixed;
             top: 20px;
             right: 20px;
@@ -60,7 +71,7 @@
             border-radius: 5px;
         }
         .alert.show {
-            display: block;
+            display: block; /* Displayed when active */
         }
     </style>
 </head>
@@ -73,6 +84,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <!-- Navigation links -->
                     <li class="nav-item"><a class="nav-link" href="#rent">Pay Rent</a></li>
                     <li class="nav-item"><a class="nav-link" href="#transfer">Bank Transfer</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://wa.me/971588997129" target="_blank">Contact</a></li>
@@ -87,14 +99,17 @@
     <div id="rent" class="section container">
         <h2>Pay Rent Online</h2>
         <form id="ziinaPaymentForm">
+            <!-- User's name input -->
             <div class="mb-3">
                 <label for="name">Name</label>
                 <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
             </div>
+            <!-- Apartment number input -->
             <div class="mb-3">
                 <label for="apartment">Apartment/Partition Number</label>
                 <input type="text" class="form-control" id="apartment" placeholder="e.g., A-101" required>
             </div>
+            <!-- Rent amount input -->
             <div class="mb-3">
                 <label for="amount">Amount (AED)</label>
                 <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
@@ -109,6 +124,7 @@
         <h2>Bank Transfer</h2>
         <p><b>Bank Details:</b></p>
         <ul>
+            <!-- Static bank details -->
             <li>Bank Name: Abu Dhabi Commercial Bank PJSC</li>
             <li>Account Title: ZIAD MOHAMED RAMADAN DAMARANY HARES</li>
             <li>Account Number: 13719615810001</li>
@@ -118,18 +134,22 @@
             <li>Swift Code: ADCBAEAA</li>
         </ul>
         <form id="bankTransferForm">
+            <!-- User's name input -->
             <div class="mb-3">
                 <label for="bankName">Name</label>
                 <input type="text" class="form-control" id="bankName" placeholder="Enter your name" required>
             </div>
+            <!-- Apartment number input -->
             <div class="mb-3">
                 <label for="bankApartment">Apartment/Partition Number</label>
                 <input type="text" class="form-control" id="bankApartment" placeholder="e.g., A-101" required>
             </div>
+            <!-- Transfer amount input -->
             <div class="mb-3">
                 <label for="bankAmount">Amount (AED)</label>
                 <input type="number" class="form-control" id="bankAmount" placeholder="Enter amount" required>
             </div>
+            <!-- Receipt upload input -->
             <div class="mb-3">
                 <label for="bankReceipt">Upload Receipt</label>
                 <input type="file" class="form-control" id="bankReceipt" required>
@@ -140,13 +160,16 @@
     </div>
 
     <footer class="text-center py-3">&copy; 2024 Tecom Residence</footer>
+    <!-- Ensure Bootstrap JavaScript is properly loaded; this is necessary for the navbar functionality to work correctly -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script type="module">
+        // Load Firebase dependencies
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
 
+        // Firebase configuration for your project
         const firebaseConfig = {
             apiKey: "AIzaSyAWYoxoPECCBK5n-IPYLgtDRSwnGpWbEHs",
             authDomain: "tecom-payments.firebaseapp.com",
@@ -157,20 +180,23 @@
             appId: "1:1068526664654:web:2a4e53dd5160fa950b499f",
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const storage = getStorage(app);
 
+        // Handle Ziina payment form submission
         document.getElementById('ziinaPaymentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent page reload on form submission
             const name = document.getElementById('name').value;
             const apartment = document.getElementById('apartment').value;
             const amount = document.getElementById('amount').value;
 
             if (name && apartment && amount) {
                 const ziinaLink = `https://pay.ziina.com/haresholmes?amount=${amount}`;
-                window.open(ziinaLink, '_blank');
+                window.open(ziinaLink, '_blank'); // Redirect user to Ziina payment link
 
+                // Add payment details to Firestore
                 await addDoc(collection(db, 'payments'), {
                     name,
                     apartment,
@@ -179,23 +205,26 @@
                     timestamp: serverTimestamp(),
                 });
 
+                // Show success alert
                 document.getElementById('ziina-alert').classList.add('show');
                 setTimeout(() => document.getElementById('ziina-alert').classList.remove('show'), 3000);
             }
         });
 
+        // Handle bank transfer form submission
         document.getElementById('bankTransferForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent page reload on form submission
             const name = document.getElementById('bankName').value;
             const apartment = document.getElementById('bankApartment').value;
             const amount = document.getElementById('bankAmount').value;
-            const receipt = document.getElementById('bankReceipt').files[0];
+            const receipt = document.getElementById('bankReceipt').files[0]; // Get uploaded receipt file
 
             if (name && apartment && amount && receipt) {
                 const receiptRef = ref(storage, `receipts/${Date.now()}_${receipt.name}`);
-                const uploadSnapshot = await uploadBytes(receiptRef, receipt);
-                const receiptURL = await getDownloadURL(uploadSnapshot.ref);
+                const uploadSnapshot = await uploadBytes(receiptRef, receipt); // Upload receipt to Firebase Storage
+                const receiptURL = await getDownloadURL(uploadSnapshot.ref); // Get download URL for the uploaded receipt
 
+                // Add bank transfer details to Firestore
                 await addDoc(collection(db, 'payments'), {
                     name,
                     apartment,
@@ -205,6 +234,7 @@
                     timestamp: serverTimestamp(),
                 });
 
+                // Show success alert
                 document.getElementById('transfer-alert').classList.add('show');
                 setTimeout(() => document.getElementById('transfer-alert').classList.remove('show'), 3000);
             }
