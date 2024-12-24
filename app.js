@@ -6,13 +6,21 @@ const path = require('path');
 
 const app = express();
 const PORT = 3000;
+const cors = require('cors');
+
+app.use(cors({
+    origin: 'https://haresholmes.github.io',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+}));
+
 
 // Middleware for parsing JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Middleware to serve static files (e.g., index.html)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname)));
 
 // Storage configuration for multer to handle file uploads
 const storage = multer.diskStorage({
