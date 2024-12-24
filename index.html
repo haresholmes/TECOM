@@ -179,7 +179,7 @@
                 const ziinaLink = `https://pay.ziina.com/haresholmes?amount=${amount}`;
                 window.open(ziinaLink, '_blank');
 
-                const scriptURL = 'https://script.google.com/macros/s/AKfycbzkPkKsu1fNcPHqK_wygWkIbA4bFhpxxWWpmXYBtH7z0A02Y8o65GXLJa36ByQzpXCs/exec';
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbwK6sB8f59uAzetqw6yp2Cesb3W_PkilAaXbvfet2ulKkVYNguoaCgMjarYDxcWF5Jp/exec';
                 fetch(scriptURL, {
                     method: 'POST',
                     headers: {
@@ -213,7 +213,7 @@
                 formData.append('paymentMethod', 'Bank Transfer');
                 formData.append('receipt', receipt);
 
-                const scriptURL = 'https://script.google.com/macros/s/AKfycbzkPkKsu1fNcPHqK_wygWkIbA4bFhpxxWWpmXYBtH7z0A02Y8o65GXLJa36ByQzpXCs/exec';
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbwK6sB8f59uAzetqw6yp2Cesb3W_PkilAaXbvfet2ulKkVYNguoaCgMjarYDxcWF5Jp/exec';
                 fetch(scriptURL, {
                     method: 'POST',
                     body: formData
